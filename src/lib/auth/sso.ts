@@ -4,7 +4,7 @@
 // Constantes e helpers para SSO V2 (ticket exchange) com Clearix Hub.
 // Padrao compartilhado entre todos os apps Clearix.
 
-export const SSO_APP_KEY = 'sis_ar_vision'
+export const SSO_APP_KEY = 'clearix_ar_vision'
 export const SSO_APP_KEY_PARAM = 'app_key'
 export const SSO_LEGACY_APP_PARAM = 'app'
 export const SSO_TICKET_PARAM = 'ticket'
