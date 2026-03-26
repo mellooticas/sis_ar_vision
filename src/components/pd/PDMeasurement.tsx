@@ -8,9 +8,10 @@ import { CameraFeed } from '@/components/ar/CameraFeed'
 import { PermissionPrompt } from '@/components/ar/PermissionPrompt'
 import { QualityIndicator } from '@/components/ar/QualityIndicator'
 import { PDResult } from './PDResult'
+import { FaceSilhouette } from './FaceSilhouette'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { Crosshair, Pause, Play } from 'lucide-react'
+import { Pause, Play } from 'lucide-react'
 import type { PDResult as PDResultType } from '@/lib/ar/pd-calculator'
 
 interface PDMeasurementProps {
@@ -101,18 +102,12 @@ export function PDMeasurement({ mode = 'iris', onComplete, className }: PDMeasur
       <div className="relative overflow-hidden rounded-xl bg-black aspect-[4/3]">
         <CameraFeed ref={videoRef} mirrored className="h-full w-full" />
 
-        {/* Crosshair guide */}
-        {measuring && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="relative">
-              {/* Horizontal line through eye level */}
-              <div className="w-48 h-px bg-primary/60" />
-              {/* Vertical center */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <Crosshair className="h-8 w-8 text-primary/60" />
-              </div>
-            </div>
-          </div>
+        {/* Face silhouette guide — always visible when camera is on */}
+        {cameraReady && !isLoading && (
+          <FaceSilhouette
+            aligned={!!faceResult}
+            measuring={measuring}
+          />
         )}
 
         {/* Top overlay */}
@@ -148,7 +143,7 @@ export function PDMeasurement({ mode = 'iris', onComplete, className }: PDMeasur
         {cameraReady && !measuring && !isLoading && (
           <div className="absolute bottom-4 left-0 right-0 text-center">
             <span className="inline-block rounded-full bg-black/60 px-4 py-2 text-xs text-white">
-              Posicione o rosto no centro e clique em Medir
+              Encaixe seu rosto na silhueta e clique em Medir
             </span>
           </div>
         )}
