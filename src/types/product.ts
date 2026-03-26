@@ -34,3 +34,26 @@ export interface FrameModel {
   image_url: string | null
   is_active: boolean
 }
+
+/** Frame model linked to a 3D .glb file via inventory.frame_models */
+export interface FrameModel3D {
+  id: string
+  tenant_id: string
+  product_id: string
+  model_url: string
+  model_format: 'glb' | 'gltf'
+  model_metadata: FrameModelMetadata
+  preview_image_url: string | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+/** Physical dimensions of the frame (for fit score + fitting height) */
+export interface FrameModelMetadata {
+  frame_width_mm?: number
+  bridge_width_mm?: number
+  temple_length_mm?: number
+  lens_width_mm?: number
+  lens_height_mm?: number
+}

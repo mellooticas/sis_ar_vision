@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { listProducts, getProduct, searchProducts, listFrameModels } from '@/lib/data/repository'
+import { listProducts, getProduct, searchProducts, listFrameModels, getFrameModelByProduct, listFrameModels3D } from '@/lib/data/repository'
 
 export const productKeys = {
   all: ['products'] as const,
@@ -50,6 +50,23 @@ export function useFrameModels() {
   return useQuery({
     queryKey: productKeys.frames(),
     queryFn: () => listFrameModels(),
+    staleTime: 10 * 60 * 1000,
+  })
+}
+
+export function useFrameModelByProduct(productId: string) {
+  return useQuery({
+    queryKey: [...productKeys.frames(), '3d', productId],
+    queryFn: () => getFrameModelByProduct(productId),
+    enabled: !!productId,
+    staleTime: 10 * 60 * 1000,
+  })
+}
+
+export function useFrameModels3D() {
+  return useQuery({
+    queryKey: [...productKeys.frames(), '3d-all'],
+    queryFn: () => listFrameModels3D(),
     staleTime: 10 * 60 * 1000,
   })
 }

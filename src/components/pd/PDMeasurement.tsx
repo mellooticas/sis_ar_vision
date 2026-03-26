@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useCamera } from '@/hooks/useCamera'
 import { useFaceLandmarker } from '@/hooks/useFaceLandmarker'
 import { usePupillaryDistance } from '@/hooks/usePupillaryDistance'
+import { useFittingHeight } from '@/hooks/useFittingHeight'
 import { CameraFeed } from '@/components/ar/CameraFeed'
 import { PermissionPrompt } from '@/components/ar/PermissionPrompt'
 import { QualityIndicator } from '@/components/ar/QualityIndicator'
@@ -13,10 +14,11 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Pause, Play } from 'lucide-react'
 import type { PDResult as PDResultType } from '@/lib/ar/pd-calculator'
+import type { FittingHeightResult } from '@/lib/ar/fitting-height-calculator'
 
 interface PDMeasurementProps {
   mode?: 'iris' | 'card'
-  onComplete?: (result: PDResultType) => void
+  onComplete?: (result: PDResultType, fittingHeight?: FittingHeightResult) => void
   className?: string
 }
 
@@ -24,25 +26,35 @@ export function PDMeasurement({ mode = 'iris', onComplete, className }: PDMeasur
   const [permissionGranted, setPermissionGranted] = useState(false)
   const [measuring, setMeasuring] = useState(false)
   const [finalResult, setFinalResult] = useState<PDResultType | null>(null)
+  const [finalFH, setFinalFH] = useState<FittingHeightResult | null>(null)
 
   const { videoRef, isReady: cameraReady, error: cameraError, start, stop } = useCamera()
   const { result: faceResult, fps, startDetection, stopDetection, isLoading } = useFaceLandmarker()
   const { currentReading, stableReading, isStable, sampleCount, processSample, reset: resetPD } = usePupillaryDistance({ mode })
+  const {
+    currentReading: fhReading,
+    stableReading: fhStable,
+    isStable: fhIsStable,
+    processSample: fhProcess,
+    reset: resetFH,
+  } = useFittingHeight()
 
-  // Process landmarks for PD when measuring
+  // Process landmarks for PD + Fitting Height when measuring
   useEffect(() => {
     if (measuring && faceResult?.landmarks) {
       processSample(faceResult.landmarks)
+      fhProcess(faceResult.landmarks)
     }
-  }, [measuring, faceResult, processSample])
+  }, [measuring, faceResult, processSample, fhProcess])
 
-  // Auto-capture when stable
+  // Auto-capture when PD is stable (fitting height may stabilize slightly later)
   useEffect(() => {
     if (measuring && isStable && stableReading) {
       setMeasuring(false)
       setFinalResult(stableReading)
+      setFinalFH(fhStable ?? fhReading)
     }
-  }, [measuring, isStable, stableReading])
+  }, [measuring, isStable, stableReading, fhStable, fhReading])
 
   // Start face detection when camera is ready
   useEffect(() => {
@@ -59,21 +71,25 @@ export function PDMeasurement({ mode = 'iris', onComplete, className }: PDMeasur
 
   const handleStartMeasuring = useCallback(() => {
     resetPD()
+    resetFH()
     setFinalResult(null)
+    setFinalFH(null)
     setMeasuring(true)
-  }, [resetPD])
+  }, [resetPD, resetFH])
 
   const handleRetry = useCallback(() => {
     setFinalResult(null)
+    setFinalFH(null)
     resetPD()
+    resetFH()
     setMeasuring(true)
-  }, [resetPD])
+  }, [resetPD, resetFH])
 
   const handleAccept = useCallback((value: number) => {
     if (finalResult) {
-      onComplete?.(finalResult)
+      onComplete?.(finalResult, finalFH ?? undefined)
     }
-  }, [finalResult, onComplete])
+  }, [finalResult, finalFH, onComplete])
 
   if (!permissionGranted) {
     return (
@@ -89,6 +105,7 @@ export function PDMeasurement({ mode = 'iris', onComplete, className }: PDMeasur
       <div className={cn('space-y-4', className)}>
         <PDResult
           result={finalResult}
+          fittingHeight={finalFH ?? undefined}
           onRetry={handleRetry}
           onAccept={handleAccept}
         />
@@ -124,7 +141,8 @@ export function PDMeasurement({ mode = 'iris', onComplete, className }: PDMeasur
         {measuring && currentReading && (
           <div className="absolute bottom-12 left-0 right-0 text-center">
             <span className="inline-block bg-black/70 rounded-lg px-4 py-2 text-white font-mono text-lg">
-              {currentReading.value} mm
+              PD: {currentReading.value} mm
+              {fhReading && <span className="ml-3 text-sm opacity-80">AH: {fhReading.value} mm</span>}
             </span>
           </div>
         )}

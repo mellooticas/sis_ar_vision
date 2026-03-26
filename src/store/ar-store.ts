@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 import type { GlassesTransform, PDMeasurement } from '@/types/ar'
+import type { FaceShapeResult } from '@/lib/ar/face-shape-classifier'
+import type { FittingHeightResult } from '@/lib/ar/fitting-height-calculator'
 
 interface ARState {
   // Camera
@@ -21,6 +23,18 @@ interface ARState {
   pdMeasurement: PDMeasurement | null
   pdMode: 'iris' | 'card'
 
+  // Face Shape (Feature 3)
+  faceShape: FaceShapeResult | null
+
+  // Fitting Height (Feature 2)
+  fittingHeight: FittingHeightResult | null
+
+  // Patient selection (Feature 5)
+  selectedPatientId: string | null
+
+  // Comparison (Feature 7)
+  comparisonFrameIds: string[]
+
   // Actions
   setCameraReady: (ready: boolean) => void
   setFacingMode: (mode: 'user' | 'environment') => void
@@ -32,6 +46,10 @@ interface ARState {
   setSelectedGlasses: (id: string | null, modelUrl: string | null) => void
   setPdMeasurement: (measurement: PDMeasurement | null) => void
   setPdMode: (mode: 'iris' | 'card') => void
+  setFaceShape: (shape: FaceShapeResult | null) => void
+  setFittingHeight: (fh: FittingHeightResult | null) => void
+  setSelectedPatientId: (id: string | null) => void
+  setComparisonFrameIds: (ids: string[]) => void
   reset: () => void
 }
 
@@ -47,6 +65,10 @@ const initialState = {
   selectedGlassesModelUrl: null,
   pdMeasurement: null,
   pdMode: 'iris' as const,
+  faceShape: null,
+  fittingHeight: null,
+  selectedPatientId: null,
+  comparisonFrameIds: [] as string[],
 }
 
 export const useARStore = create<ARState>((set) => ({
@@ -62,5 +84,9 @@ export const useARStore = create<ARState>((set) => ({
   setSelectedGlasses: (id, modelUrl) => set({ selectedGlassesId: id, selectedGlassesModelUrl: modelUrl }),
   setPdMeasurement: (measurement) => set({ pdMeasurement: measurement }),
   setPdMode: (mode) => set({ pdMode: mode }),
+  setFaceShape: (shape) => set({ faceShape: shape }),
+  setFittingHeight: (fh) => set({ fittingHeight: fh }),
+  setSelectedPatientId: (id) => set({ selectedPatientId: id }),
+  setComparisonFrameIds: (ids) => set({ comparisonFrameIds: ids }),
   reset: () => set(initialState),
 }))

@@ -15,7 +15,7 @@
  */
 
 import { supabase } from '@/lib/supabase/client'
-import type { Product, FrameModel } from '@/types/product'
+import type { Product, FrameModel, FrameModel3D } from '@/types/product'
 import type { CanonicalLens, LensOption } from '@/types/lens'
 import type { Patient, Prescription } from '@/types/patient'
 
@@ -163,6 +163,41 @@ export async function listFrameModels(): Promise<FrameModel[]> {
 }
 
 // ---------------------------------------------------------------------------
+// FRAME MODELS 3D (inventory.frame_models)
+// ---------------------------------------------------------------------------
+
+const VIEW_FRAME_MODELS = 'v_inventory_frame_models'
+
+export async function getFrameModelByProduct(productId: string): Promise<FrameModel3D | null> {
+  return fetchView<FrameModel3D | null>(VIEW_FRAME_MODELS, {
+    filters: { product_id: productId },
+    maybeSingle: true,
+  })
+}
+
+export async function listFrameModels3D(): Promise<FrameModel3D[]> {
+  return fetchView<FrameModel3D[]>(VIEW_FRAME_MODELS, {
+    order: { column: 'created_at', ascending: false },
+  })
+}
+
+export async function upsertFrameModel(params: {
+  productId: string
+  modelUrl: string
+  modelFormat?: string
+  modelMetadata?: Record<string, unknown>
+  previewImageUrl?: string | null
+}): Promise<string> {
+  return callRpc<string>('rpc_inventory_upsert_frame_model', {
+    p_product_id: params.productId,
+    p_model_url: params.modelUrl,
+    p_model_format: params.modelFormat ?? 'glb',
+    p_model_metadata: params.modelMetadata ?? {},
+    p_preview_image_url: params.previewImageUrl ?? null,
+  })
+}
+
+// ---------------------------------------------------------------------------
 // LENTES
 // ---------------------------------------------------------------------------
 
@@ -224,6 +259,29 @@ export async function getPatientPrescriptions(patientId: string): Promise<Prescr
   return fetchView<Prescription[]>(VIEW_PRESCRIPTIONS, {
     filters: { patient_id: patientId },
     order: { column: 'prescription_date', ascending: false },
+  })
+}
+
+// ---------------------------------------------------------------------------
+// SALVAR MEDICOES (PD + Fitting Height)
+// ---------------------------------------------------------------------------
+
+export async function saveMeasurements(params: {
+  patientId: string
+  pdBinocular?: number
+  pdRight?: number
+  pdLeft?: number
+  odHeight?: number
+  oeHeight?: number
+}): Promise<string> {
+  return callRpc<string>('rpc_clinical_upsert_prescription', {
+    p_patient_id: params.patientId,
+    p_prescription_date: new Date().toISOString().split('T')[0],
+    p_interpupillary_distance: params.pdBinocular ?? null,
+    p_od_pd: params.pdRight ?? null,
+    p_oe_pd: params.pdLeft ?? null,
+    p_od_height: params.odHeight ?? null,
+    p_oe_height: params.oeHeight ?? null,
   })
 }
 

@@ -1,14 +1,17 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useCamera } from '@/hooks/useCamera'
 import { useFaceLandmarker } from '@/hooks/useFaceLandmarker'
 import { useGlassesAlignment } from '@/hooks/useGlassesAlignment'
+import { useCapture } from '@/hooks/useCapture'
 import { useARStore } from '@/store/ar-store'
 import { CameraFeed } from './CameraFeed'
 import { GlassesOverlay } from './GlassesOverlay'
 import { PermissionPrompt } from './PermissionPrompt'
 import { QualityIndicator } from './QualityIndicator'
+import { CaptureButton } from './CaptureButton'
+import { CaptureGallery } from './CaptureGallery'
 import { cn } from '@/lib/utils'
 import { FlipHorizontal2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -31,6 +34,12 @@ export function ARScene({ className, onClose }: ARSceneProps) {
   const [supported] = useState(() => typeof window !== 'undefined' ? isARSupported() : true)
   const { videoRef, isReady: cameraReady, error: cameraError, start, stop, switchCamera, facingMode } = useCamera()
   const { result, fps, startDetection, stopDetection, isLoading: landmarkerLoading } = useFaceLandmarker()
+
+  // Canvas ref for composite capture
+  const threeCanvasRef = useRef<HTMLCanvasElement | null>(null)
+
+  // Capture system
+  const { captures, isCapturing, capturePhoto, removeCapture } = useCapture()
 
   const selectedGlassesModelUrl = useARStore((s) => s.selectedGlassesModelUrl)
   const setFaceDetected = useARStore((s) => s.setFaceDetected)
@@ -82,6 +91,11 @@ export function ARScene({ className, onClose }: ARSceneProps) {
     onClose?.()
   }, [stop, stopDetection, onClose])
 
+  const handleCapture = useCallback(() => {
+    if (!videoRef.current) return
+    capturePhoto(videoRef.current, threeCanvasRef.current, null, undefined)
+  }, [capturePhoto, videoRef])
+
   // Unsupported browser fallback
   if (!supported) {
     return (
@@ -118,6 +132,7 @@ export function ARScene({ className, onClose }: ARSceneProps) {
 
       {/* 3D Glasses overlay */}
       <GlassesOverlay
+        ref={threeCanvasRef}
         modelUrl={selectedGlassesModelUrl}
         transform={glassesTransform}
         className="absolute inset-0"
@@ -152,7 +167,23 @@ export function ARScene({ className, onClose }: ARSceneProps) {
           <FlipHorizontal2 className="mr-1.5 h-4 w-4" />
           Trocar Camera
         </Button>
+
+        {/* Capture button — only visible when glasses are active */}
+        {selectedGlassesModelUrl && (
+          <CaptureButton
+            onClick={handleCapture}
+            disabled={!cameraReady || !result}
+            isCapturing={isCapturing}
+          />
+        )}
       </div>
+
+      {/* Capture gallery strip */}
+      {captures.length > 0 && (
+        <div className="absolute bottom-20 left-3 right-3">
+          <CaptureGallery captures={captures} onRemove={removeCapture} />
+        </div>
+      )}
 
       {/* Loading overlay */}
       {landmarkerLoading && (

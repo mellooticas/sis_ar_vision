@@ -12,6 +12,10 @@ import {
   Moon,
   Sun,
   X,
+  ScanFace,
+  Layers,
+  GitCompareArrows,
+  Tablet,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -41,7 +45,17 @@ const navigationSections: NavSection[] = [
       { name: 'Dashboard', href: '/dashboard', icon: Home, roles: ['admin', 'medico', 'atendente'] },
       { name: 'Prova Virtual', href: '/dashboard/try-on', icon: ScanEye, roles: ['admin', 'medico', 'atendente'] },
       { name: 'Medir PD', href: '/dashboard/medir-pd', icon: Ruler, roles: ['admin', 'medico', 'atendente'] },
+      { name: 'Formato do Rosto', href: '/dashboard/face-shape', icon: ScanFace, roles: ['admin', 'medico', 'atendente'] },
       { name: 'Catalogo', href: '/dashboard/catalogo', icon: ShoppingBag, roles: ['admin', 'medico', 'atendente'] },
+    ],
+  },
+  {
+    id: 'ferramentas',
+    label: 'Ferramentas',
+    items: [
+      { name: 'Espessura de Lente', href: '/dashboard/espessura-lente', icon: Layers, roles: ['admin', 'medico', 'atendente'] },
+      { name: 'Comparar Armacoes', href: '/dashboard/comparar', icon: GitCompareArrows, roles: ['admin', 'medico', 'atendente'] },
+      { name: 'Modo Cliente', href: '/cliente', icon: Tablet, roles: ['admin', 'medico'] },
     ],
   },
   {
@@ -232,7 +246,7 @@ export function DashboardSidebar({ open = false, onClose }: DashboardSidebarProp
       </div>
 
       {/* Desktop sidebar */}
-      <div className={`hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:flex-col transition-all duration-300 ${isCollapsed ? 'lg:w-[72px]' : 'lg:w-64'}`}>
+      <div className={`hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:flex-col transition-all duration-300 ${isCollapsed ? 'lg:w-18' : 'lg:w-64'}`}>
         {sidebarInner(false)}
       </div>
     </>

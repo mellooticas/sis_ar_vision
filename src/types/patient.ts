@@ -32,6 +32,10 @@ export interface Prescription {
   pd_right: number | null
   pd_left: number | null
   pd_binocular: number | null
+  od_height: number | null
+  oe_height: number | null
+  vision_type: string | null
+  frame_size: number | null
   notes: string | null
   created_at: string
   updated_at: string
