@@ -159,6 +159,7 @@ export function ARScene({ className, onClose }: ARSceneProps) {
         <QualityIndicator
           faceDetected={!!result}
           fps={fps}
+          distanceMm={depthEstimate?.depthMm}
         />
         {onClose && (
           <Button
@@ -182,16 +183,16 @@ export function ARScene({ className, onClose }: ARSceneProps) {
         </div>
       )}
 
-      {/* Bottom controls */}
-      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-3">
+      {/* Bottom controls — touch-friendly (min 44px tap targets) */}
+      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2 sm:gap-3">
         <Button
           variant="ghost"
           size="sm"
           onClick={switchCamera}
-          className="text-white hover:bg-white/20"
+          className="text-white hover:bg-white/20 min-h-11 min-w-11 px-3"
         >
-          <FlipHorizontal2 className="mr-1.5 h-4 w-4" />
-          Trocar Camera
+          <FlipHorizontal2 className="mr-1.5 h-5 w-5 sm:h-4 sm:w-4" />
+          <span className="hidden sm:inline">Trocar Camera</span>
         </Button>
 
         {/* Lens tint toggle */}
@@ -200,10 +201,10 @@ export function ARScene({ className, onClose }: ARSceneProps) {
             variant="ghost"
             size="sm"
             onClick={() => setShowTintPanel((v) => !v)}
-            className={cn('text-white hover:bg-white/20', showTintPanel && 'bg-white/20')}
+            className={cn('text-white hover:bg-white/20 min-h-11 min-w-11 px-3', showTintPanel && 'bg-white/20')}
           >
-            <Palette className="mr-1.5 h-4 w-4" />
-            Lente
+            <Palette className="mr-1.5 h-5 w-5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Lente</span>
           </Button>
         )}
 
