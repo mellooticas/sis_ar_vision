@@ -6,6 +6,7 @@
  */
 
 import type { GlassesTransform } from '@/types/ar'
+import type { CalibrationState } from '@/types/measurement'
 import {
   NOSE_BRIDGE_TOP,
   NOSE_BRIDGE_MID,
@@ -27,6 +28,12 @@ interface ComputeTransformOptions {
   landmarks: Point3D[]
   /** Facial transformation matrix from MediaPipe (4x4 row-major) */
   facialTransformationMatrix?: number[] | null
+  /** Calibration data for real-size rendering */
+  calibration?: CalibrationState | null
+  /** Estimated depth from iris in mm (for depth-aware positioning) */
+  estimatedDepthMm?: number | null
+  /** Frame width in mm from product metadata (e.g., 140 for 54-20-140) */
+  frameWidthMm?: number | null
 }
 
 /**
@@ -34,7 +41,15 @@ interface ComputeTransformOptions {
  * based on the detected face landmarks.
  */
 export function computeGlassesTransform(options: ComputeTransformOptions): GlassesTransform {
-  const { landmarks, videoWidth, videoHeight, facialTransformationMatrix } = options
+  const {
+    landmarks,
+    videoWidth,
+    videoHeight,
+    facialTransformationMatrix,
+    calibration,
+    estimatedDepthMm,
+    frameWidthMm,
+  } = options
 
   // Anchor point: nose bridge
   const noseBridgeTop = landmarks[NOSE_BRIDGE_TOP]
@@ -56,8 +71,20 @@ export function computeGlassesTransform(options: ComputeTransformOptions): Glass
   const faceBottom = landmarks[FACE_OVAL_BOTTOM]
   const faceHeight = distance2D(faceTop, faceBottom)
 
-  // Scale factor — calibrated for typical glasses .glb model
-  const baseScale = eyeDistance * 3.5
+  // Scale factor — use calibrated scale when available, fallback to heuristic
+  let baseScale: number
+
+  if (calibration && calibration.pxPerMm > 0 && frameWidthMm && frameWidthMm > 0) {
+    // Calibrated: use known frame dimensions for real-size rendering
+    // Convert frame width from mm to normalized coords via px_per_mm
+    const frameWidthNorm = (frameWidthMm * calibration.pxPerMm) / videoWidth
+    // Model assumed to be ~1 unit wide; adjust ratio as needed
+    baseScale = frameWidthNorm * 2.0
+  } else {
+    // Heuristic fallback — magic number calibrated for typical .glb models
+    baseScale = eyeDistance * 3.5
+  }
+
   const scaleX = baseScale
   const scaleY = baseScale
   const scaleZ = baseScale
@@ -104,11 +131,18 @@ export function computeGlassesTransform(options: ComputeTransformOptions): Glass
     rotZ = -eyeMidLine
   }
 
+  // Depth-aware Z correction: normalize to ~400mm expected distance
+  let adjustedPosZ = posZ
+  if (estimatedDepthMm && estimatedDepthMm > 0) {
+    const EXPECTED_DEPTH_MM = 400
+    adjustedPosZ = posZ * (EXPECTED_DEPTH_MM / estimatedDepthMm)
+  }
+
   // Aspect ratio correction
   const aspect = videoWidth / videoHeight
 
   return {
-    position: [posX * aspect, posY, posZ],
+    position: [posX * aspect, posY, adjustedPosZ],
     rotation: [rotX, rotY, rotZ],
     scale: [scaleX, scaleY, scaleZ],
   }

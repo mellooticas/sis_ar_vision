@@ -30,7 +30,7 @@ export function PDMeasurement({ mode = 'iris', onComplete, className }: PDMeasur
 
   const { videoRef, isReady: cameraReady, error: cameraError, start, stop } = useCamera()
   const { result: faceResult, fps, startDetection, stopDetection, isLoading } = useFaceLandmarker()
-  const { currentReading, stableReading, isStable, sampleCount, processSample, reset: resetPD } = usePupillaryDistance({ mode })
+  const { currentReading, stableReading, isStable, sampleCount, repeatabilityScore, processSample, reset: resetPD } = usePupillaryDistance({ mode })
   const {
     currentReading: fhReading,
     stableReading: fhStable,
@@ -42,7 +42,7 @@ export function PDMeasurement({ mode = 'iris', onComplete, className }: PDMeasur
   // Process landmarks for PD + Fitting Height when measuring
   useEffect(() => {
     if (measuring && faceResult?.landmarks) {
-      processSample(faceResult.landmarks)
+      processSample(faceResult.landmarks, faceResult.facialTransformationMatrix)
       fhProcess(faceResult.landmarks)
     }
   }, [measuring, faceResult, processSample, fhProcess])
@@ -132,7 +132,7 @@ export function PDMeasurement({ mode = 'iris', onComplete, className }: PDMeasur
           <QualityIndicator faceDetected={!!faceResult} fps={fps} />
           {measuring && (
             <span className="text-xs text-white/80 bg-black/50 rounded-full px-3 py-1">
-              {sampleCount}/15 amostras
+              {sampleCount}/20 amostras | {repeatabilityScore}%
             </span>
           )}
         </div>

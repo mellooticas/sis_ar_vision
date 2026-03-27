@@ -3,20 +3,28 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
-import type { Group } from 'three'
+import { Color, type Group } from 'three'
 import type { GlassesTransform } from '@/types/ar'
+
+interface LensTintConfig {
+  color: string
+  opacity: number
+  mirror?: boolean
+}
 
 interface GlassesModelProps {
   modelUrl: string
   transform: GlassesTransform
   /** Opacity for fade-in effect */
   opacity?: number
+  /** Lens tint color/opacity for AR preview */
+  lensTint?: LensTintConfig
 }
 
 /**
  * Renders a .glb glasses model with position/rotation/scale from face tracking.
  */
-export function GlassesModel({ modelUrl, transform, opacity = 1 }: GlassesModelProps) {
+export function GlassesModel({ modelUrl, transform, opacity = 1, lensTint }: GlassesModelProps) {
   const groupRef = useRef<Group>(null)
   const { scene } = useGLTF(modelUrl)
 
@@ -43,16 +51,29 @@ export function GlassesModel({ modelUrl, transform, opacity = 1 }: GlassesModelP
       <primitive
         object={scene.clone()}
         scale={1}
-        // Apply opacity to all meshes if needed
+        // Apply opacity and lens tint to meshes
         onUpdate={(self: any) => {
-          if (opacity < 1) {
-            self.traverse((child: any) => {
-              if (child.isMesh && child.material) {
-                child.material.transparent = true
-                child.material.opacity = opacity
+          self.traverse((child: any) => {
+            if (!child.isMesh || !child.material) return
+
+            // Apply fade-in opacity
+            if (opacity < 1) {
+              child.material.transparent = true
+              child.material.opacity = opacity
+            }
+
+            // Apply lens tint to lens meshes (name contains 'lens' or 'lente')
+            const meshName = (child.name || '').toLowerCase()
+            if (lensTint && lensTint.opacity > 0 && (meshName.includes('lens') || meshName.includes('lente') || meshName.includes('glass'))) {
+              child.material.transparent = true
+              child.material.opacity = lensTint.opacity
+              child.material.color = new Color(lensTint.color)
+              if (lensTint.mirror) {
+                child.material.metalness = 0.8
+                child.material.roughness = 0.1
               }
-            })
-          }
+            }
+          })
         }}
       />
     </group>

@@ -17,6 +17,8 @@ import {
   GitCompareArrows,
   Tablet,
   Camera,
+  Sparkles,
+  Focus,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -57,6 +59,8 @@ const navigationSections: NavSection[] = [
       { name: 'Espessura de Lente', href: '/dashboard/espessura-lente', icon: Layers, roles: ['admin', 'medico', 'atendente'] },
       { name: 'Comparar Armacoes', href: '/dashboard/comparar', icon: GitCompareArrows, roles: ['admin', 'medico', 'atendente'] },
       { name: 'Fotos de Armacoes', href: '/dashboard/fotos-armacoes', icon: Camera, roles: ['admin', 'atendente'] },
+      { name: 'Simulador de Tratamentos', href: '/dashboard/simulador-tratamentos', icon: Sparkles, roles: ['admin', 'medico', 'atendente'] },
+      { name: 'Lentes Progressivas', href: '/dashboard/lentes-progressivas', icon: Focus, roles: ['admin', 'medico', 'atendente'] },
       { name: 'Modo Cliente', href: '/cliente', icon: Tablet, roles: ['admin', 'medico'] },
     ],
   },
