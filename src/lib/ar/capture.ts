@@ -17,8 +17,8 @@ export async function captureCompositeImage(
   silhouetteSvg?: SVGSVGElement | null,
   options?: { quality?: number; format?: 'image/jpeg' | 'image/png'; mirror?: boolean },
 ): Promise<Blob> {
-  const width = videoElement.videoWidth || 640
-  const height = videoElement.videoHeight || 480
+  const width = videoElement.videoWidth || 1920
+  const height = videoElement.videoHeight || 1080
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height

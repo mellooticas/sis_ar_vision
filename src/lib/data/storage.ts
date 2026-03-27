@@ -73,17 +73,29 @@ export async function uploadTryOnCapture(
 
 /**
  * Upload a standardized product photo (frame capture).
- * Uses direct path construction (tenant_id from JWT).
- * When RPC rpc_storage_product_photo_path is available, will switch to that.
+ * Uses RPC rpc_storage_product_photo_path for secure path generation.
+ * Falls back to direct path if RPC not yet available.
  */
 export async function uploadProductPhoto(
   blob: Blob,
   productId: string,
   angle: string,
-): Promise<string> {
+): Promise<{ signedUrl: string; storagePath: string }> {
   const ext = blob.type === 'image/png' ? 'png' : 'jpg'
-  const filename = `${angle}_${Date.now()}.${ext}`
-  const path = `${productId}/${filename}`
+
+  // Try RPC path generation first, fallback to direct
+  let path: string
+  try {
+    path = await callRpc<string>('rpc_storage_product_photo_path', {
+      p_product_id: productId,
+      p_angle: angle,
+      p_extension: ext,
+    })
+  } catch {
+    // Fallback: direct path construction
+    const filename = `${angle}_${Date.now()}.${ext}`
+    path = `${productId}/${filename}`
+  }
 
   const { error } = await supabase.storage
     .from(BUCKET_PRODUCT_PHOTOS)
@@ -95,7 +107,35 @@ export async function uploadProductPhoto(
     .createSignedUrl(path, 3600)
   if (signError) throw signError
 
-  return data.signedUrl
+  return { signedUrl: data.signedUrl, storagePath: path }
+}
+
+/**
+ * Register a product image in the database after upload.
+ * Calls rpc_inventory_upsert_product_image.
+ */
+export async function registerProductImage(params: {
+  productId: string
+  angle: string
+  imageType?: string
+  frameShape?: string | null
+  storagePath: string
+  widthPx?: number
+  heightPx?: number
+  fileSizeBytes?: number
+  metadata?: Record<string, unknown>
+}): Promise<string> {
+  return callRpc<string>('rpc_inventory_upsert_product_image', {
+    p_product_id: params.productId,
+    p_angle: params.angle,
+    p_image_type: params.imageType ?? 'photo',
+    p_frame_shape: params.frameShape ?? null,
+    p_storage_path: params.storagePath,
+    p_width_px: params.widthPx ?? null,
+    p_height_px: params.heightPx ?? null,
+    p_file_size_bytes: params.fileSizeBytes ?? null,
+    p_metadata: params.metadata ?? {},
+  })
 }
 
 /** Gera signed URL para um arquivo existente */
