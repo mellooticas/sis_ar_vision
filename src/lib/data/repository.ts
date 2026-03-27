@@ -296,3 +296,21 @@ export async function listStores(): Promise<{ id: string; name: string; address:
     order: { column: 'name', ascending: true },
   })
 }
+
+// ---------------------------------------------------------------------------
+// DASHBOARD METRICS (contagens para cards do dashboard)
+// ---------------------------------------------------------------------------
+
+export async function countProducts(): Promise<number> {
+  return fetchView<number>(VIEW_PRODUCTS, {
+    head: true,
+    count: 'estimated',
+  })
+}
+
+export async function countPatients(): Promise<number> {
+  return fetchView<number>(VIEW_PATIENTS, {
+    head: true,
+    count: 'estimated',
+  })
+}
