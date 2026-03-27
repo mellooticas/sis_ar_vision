@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { GlassesTransform, PDMeasurement } from '@/types/ar'
 import type { FaceShapeResult } from '@/lib/ar/face-shape-classifier'
 import type { FittingHeightResult } from '@/lib/ar/fitting-height-calculator'
+import type { LensTint } from '@/types/lens-demo'
 
 interface ARState {
   // Camera
@@ -18,6 +19,8 @@ interface ARState {
   // Glasses
   selectedGlassesId: string | null
   selectedGlassesModelUrl: string | null
+  lensTint: LensTint | null
+  frameWidthMm: number | null
 
   // PD Measurement
   pdMeasurement: PDMeasurement | null
@@ -44,6 +47,8 @@ interface ARState {
   setLandmarks: (landmarks: Array<{ x: number; y: number; z: number }> | null) => void
   setGlassesTransform: (transform: GlassesTransform | null) => void
   setSelectedGlasses: (id: string | null, modelUrl: string | null) => void
+  setLensTint: (tint: LensTint | null) => void
+  setFrameWidthMm: (width: number | null) => void
   setPdMeasurement: (measurement: PDMeasurement | null) => void
   setPdMode: (mode: 'iris' | 'card') => void
   setFaceShape: (shape: FaceShapeResult | null) => void
@@ -63,6 +68,8 @@ const initialState = {
   glassesTransform: null,
   selectedGlassesId: null,
   selectedGlassesModelUrl: null,
+  lensTint: null,
+  frameWidthMm: null,
   pdMeasurement: null,
   pdMode: 'iris' as const,
   faceShape: null,
@@ -82,6 +89,8 @@ export const useARStore = create<ARState>((set) => ({
   setLandmarks: (landmarks) => set({ landmarks }),
   setGlassesTransform: (transform) => set({ glassesTransform: transform }),
   setSelectedGlasses: (id, modelUrl) => set({ selectedGlassesId: id, selectedGlassesModelUrl: modelUrl }),
+  setLensTint: (tint) => set({ lensTint: tint }),
+  setFrameWidthMm: (width) => set({ frameWidthMm: width }),
   setPdMeasurement: (measurement) => set({ pdMeasurement: measurement }),
   setPdMode: (mode) => set({ pdMode: mode }),
   setFaceShape: (shape) => set({ faceShape: shape }),

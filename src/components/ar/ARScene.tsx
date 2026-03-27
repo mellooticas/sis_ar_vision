@@ -4,17 +4,20 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useCamera } from '@/hooks/useCamera'
 import { useFaceLandmarker } from '@/hooks/useFaceLandmarker'
 import { useGlassesAlignment } from '@/hooks/useGlassesAlignment'
+import { useDepthEstimation } from '@/hooks/useDepthEstimation'
 import { useCapture } from '@/hooks/useCapture'
 import { useARStore } from '@/store/ar-store'
 import { CameraFeed } from './CameraFeed'
 import { GlassesOverlay } from './GlassesOverlay'
+import { LensTintSelector } from './LensTintSelector'
 import { PermissionPrompt } from './PermissionPrompt'
 import { QualityIndicator } from './QualityIndicator'
 import { CaptureButton } from './CaptureButton'
 import { CaptureGallery } from './CaptureGallery'
 import { cn } from '@/lib/utils'
-import { FlipHorizontal2, X } from 'lucide-react'
+import { FlipHorizontal2, X, Palette } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { LENS_TINTS } from '@/types/lens-demo'
 
 interface ARSceneProps {
   className?: string
@@ -32,6 +35,7 @@ function isARSupported(): boolean {
 export function ARScene({ className, onClose }: ARSceneProps) {
   const [permissionGranted, setPermissionGranted] = useState(false)
   const [supported] = useState(() => typeof window !== 'undefined' ? isARSupported() : true)
+  const [showTintPanel, setShowTintPanel] = useState(false)
   const { videoRef, isReady: cameraReady, error: cameraError, start, stop, switchCamera, facingMode } = useCamera()
   const { result, fps, startDetection, stopDetection, isLoading: landmarkerLoading } = useFaceLandmarker()
 
@@ -42,6 +46,9 @@ export function ARScene({ className, onClose }: ARSceneProps) {
   const { captures, isCapturing, capturePhoto, removeCapture } = useCapture()
 
   const selectedGlassesModelUrl = useARStore((s) => s.selectedGlassesModelUrl)
+  const lensTint = useARStore((s) => s.lensTint)
+  const frameWidthMm = useARStore((s) => s.frameWidthMm)
+  const setLensTint = useARStore((s) => s.setLensTint)
   const setFaceDetected = useARStore((s) => s.setFaceDetected)
   const setFps = useARStore((s) => s.setFps)
   const setLandmarks = useARStore((s) => s.setLandmarks)
@@ -50,12 +57,20 @@ export function ARScene({ className, onClose }: ARSceneProps) {
   // Video dimensions for transform calculation
   const [videoDimensions, setVideoDimensions] = useState({ width: 0, height: 0 })
 
-  // Compute glasses transform from landmarks
+  // Depth estimation from iris
+  const depthEstimate = useDepthEstimation(
+    result?.landmarks ?? null,
+    videoDimensions.width,
+  )
+
+  // Compute glasses transform from landmarks with calibration
   const glassesTransform = useGlassesAlignment({
     landmarks: result?.landmarks ?? null,
     facialTransformationMatrix: result?.facialTransformationMatrix,
     videoWidth: videoDimensions.width,
     videoHeight: videoDimensions.height,
+    estimatedDepthMm: depthEstimate?.depthMm ?? null,
+    frameWidthMm,
   })
 
   // Sync AR store
@@ -135,6 +150,7 @@ export function ARScene({ className, onClose }: ARSceneProps) {
         ref={threeCanvasRef}
         modelUrl={selectedGlassesModelUrl}
         transform={glassesTransform}
+        lensTint={lensTint ? { color: lensTint.color, opacity: lensTint.opacity, mirror: lensTint.mirror } : null}
         className="absolute inset-0"
       />
 
@@ -156,6 +172,16 @@ export function ARScene({ className, onClose }: ARSceneProps) {
         )}
       </div>
 
+      {/* Lens tint panel (slide-in from right) */}
+      {showTintPanel && selectedGlassesModelUrl && (
+        <div className="absolute top-14 right-3 w-48 rounded-xl bg-black/80 backdrop-blur-sm p-3 z-10">
+          <LensTintSelector
+            selected={lensTint ?? LENS_TINTS[0]}
+            onSelect={(tint) => setLensTint(tint.opacity > 0 ? tint : null)}
+          />
+        </div>
+      )}
+
       {/* Bottom controls */}
       <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-3">
         <Button
@@ -167,6 +193,19 @@ export function ARScene({ className, onClose }: ARSceneProps) {
           <FlipHorizontal2 className="mr-1.5 h-4 w-4" />
           Trocar Camera
         </Button>
+
+        {/* Lens tint toggle */}
+        {selectedGlassesModelUrl && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowTintPanel((v) => !v)}
+            className={cn('text-white hover:bg-white/20', showTintPanel && 'bg-white/20')}
+          >
+            <Palette className="mr-1.5 h-4 w-4" />
+            Lente
+          </Button>
+        )}
 
         {/* Capture button — only visible when glasses are active */}
         {selectedGlassesModelUrl && (

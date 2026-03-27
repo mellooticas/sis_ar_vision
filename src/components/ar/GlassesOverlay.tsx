@@ -5,10 +5,17 @@ import { Canvas } from '@react-three/fiber'
 import { GlassesModel } from './GlassesModel'
 import type { GlassesTransform } from '@/types/ar'
 
+interface LensTintConfig {
+  color: string
+  opacity: number
+  mirror?: boolean
+}
+
 interface GlassesOverlayProps {
   modelUrl: string | null
   transform: GlassesTransform | null
   className?: string
+  lensTint?: LensTintConfig | null
 }
 
 /**
@@ -17,7 +24,7 @@ interface GlassesOverlayProps {
  * ForwardRef exposes the underlying WebGL canvas for composite capture.
  */
 export const GlassesOverlay = forwardRef<HTMLCanvasElement, GlassesOverlayProps>(
-  function GlassesOverlay({ modelUrl, transform, className }, ref) {
+  function GlassesOverlay({ modelUrl, transform, className, lensTint }, ref) {
     const onCreated = useCallback(
       (state: { gl: { domElement: HTMLCanvasElement } }) => {
         if (typeof ref === 'function') ref(state.gl.domElement)
@@ -39,7 +46,11 @@ export const GlassesOverlay = forwardRef<HTMLCanvasElement, GlassesOverlayProps>
           <ambientLight intensity={0.8} />
           <directionalLight position={[0, 2, 4]} intensity={0.6} />
           <Suspense fallback={null}>
-            <GlassesModel modelUrl={modelUrl} transform={transform} />
+            <GlassesModel
+              modelUrl={modelUrl}
+              transform={transform}
+              lensTint={lensTint || undefined}
+            />
           </Suspense>
         </Canvas>
       </div>
