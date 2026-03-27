@@ -14,6 +14,7 @@ import { callRpc } from './repository'
 
 const BUCKET_FRAME_MODELS = 'frame-models'
 const BUCKET_AR_TRYONS = 'ar-tryons'
+const BUCKET_PRODUCT_PHOTOS = 'product-photos'
 
 /** Upload a .glb frame model file (path prefixado com tenant_id via RPC) */
 export async function uploadFrameModel(
@@ -70,9 +71,36 @@ export async function uploadTryOnCapture(
   return data.signedUrl
 }
 
+/**
+ * Upload a standardized product photo (frame capture).
+ * Uses direct path construction (tenant_id from JWT).
+ * When RPC rpc_storage_product_photo_path is available, will switch to that.
+ */
+export async function uploadProductPhoto(
+  blob: Blob,
+  productId: string,
+  angle: string,
+): Promise<string> {
+  const ext = blob.type === 'image/png' ? 'png' : 'jpg'
+  const filename = `${angle}_${Date.now()}.${ext}`
+  const path = `${productId}/${filename}`
+
+  const { error } = await supabase.storage
+    .from(BUCKET_PRODUCT_PHOTOS)
+    .upload(path, blob, { contentType: blob.type, upsert: true })
+  if (error) throw error
+
+  const { data, error: signError } = await supabase.storage
+    .from(BUCKET_PRODUCT_PHOTOS)
+    .createSignedUrl(path, 3600)
+  if (signError) throw signError
+
+  return data.signedUrl
+}
+
 /** Gera signed URL para um arquivo existente */
 export async function getSignedUrl(
-  bucket: 'frame-models' | 'ar-tryons',
+  bucket: 'frame-models' | 'ar-tryons' | 'product-photos',
   path: string,
   expiresIn: number = 3600,
 ): Promise<string> {

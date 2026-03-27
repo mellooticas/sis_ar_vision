@@ -16,6 +16,7 @@ import {
   Layers,
   GitCompareArrows,
   Tablet,
+  Camera,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -55,6 +56,7 @@ const navigationSections: NavSection[] = [
     items: [
       { name: 'Espessura de Lente', href: '/dashboard/espessura-lente', icon: Layers, roles: ['admin', 'medico', 'atendente'] },
       { name: 'Comparar Armacoes', href: '/dashboard/comparar', icon: GitCompareArrows, roles: ['admin', 'medico', 'atendente'] },
+      { name: 'Fotos de Armacoes', href: '/dashboard/fotos-armacoes', icon: Camera, roles: ['admin', 'atendente'] },
       { name: 'Modo Cliente', href: '/cliente', icon: Tablet, roles: ['admin', 'medico'] },
     ],
   },

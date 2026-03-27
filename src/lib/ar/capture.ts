@@ -15,7 +15,7 @@ export async function captureCompositeImage(
   videoElement: HTMLVideoElement,
   threeCanvas: HTMLCanvasElement | null,
   silhouetteSvg?: SVGSVGElement | null,
-  options?: { quality?: number; format?: 'image/jpeg' | 'image/png' },
+  options?: { quality?: number; format?: 'image/jpeg' | 'image/png'; mirror?: boolean },
 ): Promise<Blob> {
   const width = videoElement.videoWidth || 640
   const height = videoElement.videoHeight || 480
@@ -24,11 +24,17 @@ export async function captureCompositeImage(
   canvas.height = height
   const ctx = canvas.getContext('2d')!
 
-  // Layer 1: Video frame (mirrored for front camera)
-  ctx.save()
-  ctx.scale(-1, 1)
-  ctx.drawImage(videoElement, -width, 0, width, height)
-  ctx.restore()
+  const shouldMirror = options?.mirror ?? true
+
+  // Layer 1: Video frame (mirrored for front camera, straight for rear)
+  if (shouldMirror) {
+    ctx.save()
+    ctx.scale(-1, 1)
+    ctx.drawImage(videoElement, -width, 0, width, height)
+    ctx.restore()
+  } else {
+    ctx.drawImage(videoElement, 0, 0, width, height)
+  }
 
   // Layer 2: Three.js glasses overlay
   if (threeCanvas) {
