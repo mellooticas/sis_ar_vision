@@ -1,6 +1,6 @@
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import { AuthProvider } from '@/contexts/auth-context'
-import { SidebarProvider } from '@/contexts/sidebar-context'
+import { SidebarProvider } from '@/components/sidebar/sidebar-context'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0

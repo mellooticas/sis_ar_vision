@@ -11,7 +11,7 @@ import {
   PanelLeftOpen,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
-import { useSidebar } from '@/contexts/sidebar-context'
+import { useSidebar } from '@/components/sidebar/sidebar-context'
 import { getRoleLabel, isSuperAdmin } from '@/lib/auth/jwt-claims'
 
 const routeMeta: Record<string, { label: string; description: string }> = {
@@ -38,7 +38,7 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const pathname = usePathname()
   const { profile, signOut } = useAuth()
-  const { isCollapsed, toggleCollapse } = useSidebar()
+  const { collapsed, toggleCollapse } = useSidebar()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -86,8 +86,8 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
           <MenuIcon className="h-5 w-5" />
         </button>
 
-        <button type="button" onClick={toggleCollapse} className="hidden p-2 text-muted-foreground hover:text-foreground transition-colors lg:inline-flex" aria-label={isCollapsed ? 'Expandir' : 'Recolher'}>
-          {isCollapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+        <button type="button" onClick={toggleCollapse} className="hidden p-2 text-muted-foreground hover:text-foreground transition-colors lg:inline-flex" aria-label={collapsed ? 'Expandir' : 'Recolher'}>
+          {collapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
         </button>
 
         <div className="min-w-0">
