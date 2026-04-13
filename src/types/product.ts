@@ -17,6 +17,12 @@ export interface Product {
   barcode: string | null
   created_at: string
   updated_at: string
+  // EPI / Safety
+  ca_number: string | null
+  material: string | null
+  weight_grams: number | null
+  is_epi: boolean
+  norm_standard: string | null
 }
 
 export interface FrameModel {
