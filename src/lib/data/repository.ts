@@ -16,7 +16,13 @@
 
 import { supabase } from '@/lib/supabase/client'
 import type { Product, FrameModel, FrameModel3D } from '@/types/product'
-import type { CanonicalLens, LensOption } from '@/types/lens'
+import type {
+  PremiumFilterOptions, StandardFilterOptions,
+  PremiumFilterParamsV3, PremiumSearchParamsV3,
+  StandardFilterParamsV3, StandardSearchParamsV3,
+  CanonicalPremiumV3, CanonicalStandardV3,
+  CanonicalSearchResultV3, PrescriptionSearchV3Result, CanonicalDetail,
+} from '@/types/lens'
 import type { Patient, Prescription } from '@/types/patient'
 
 // ---------------------------------------------------------------------------
@@ -198,33 +204,97 @@ export async function upsertFrameModel(params: {
 }
 
 // ---------------------------------------------------------------------------
-// LENTES
+// LENTES — Canonical Engine v3 (alinhado com clearix_lens e clearix_vendas)
 // ---------------------------------------------------------------------------
 
-export async function searchLensesForPrescription(params: {
-  sph: number
-  cyl: number
-  add?: number
-  type?: string
-}): Promise<LensOption[]> {
-  return callRpc<LensOption[]>('rpc_canonical_for_prescription', {
-    p_sph: params.sph,
-    p_cyl: params.cyl,
-    p_add: params.add ?? null,
-    p_type: params.type ?? null,
+export async function getPremiumFilterOptions(
+  params: PremiumFilterParamsV3 = {}
+): Promise<PremiumFilterOptions> {
+  return callRpc<PremiumFilterOptions>('rpc_premium_filter_options', {
+    p_brand:        params.brand        ?? null,
+    p_product_line: params.product_line ?? null,
+    p_lens_type:    params.lens_type    ?? null,
+    p_material_id:  params.material_id  ?? null,
+    p_coating:      params.coating      ?? null,
+    p_photochromic: params.photochromic ?? null,
+    p_treatments:   params.treatments   ?? null,
   })
 }
 
-export async function getLensDetail(id: string, isPremium?: boolean): Promise<CanonicalLens | null> {
-  return callRpc<CanonicalLens | null>('rpc_canonical_detail', {
-    p_lens_id: id,
-    p_is_premium: isPremium ?? false,
+export async function searchPremium(
+  params: PremiumSearchParamsV3 = {}
+): Promise<CanonicalSearchResultV3<CanonicalPremiumV3>> {
+  return callRpc<CanonicalSearchResultV3<CanonicalPremiumV3>>('rpc_premium_search', {
+    p_brand:        params.brand        ?? null,
+    p_product_line: params.product_line ?? null,
+    p_lens_type:    params.lens_type    ?? null,
+    p_material_id:  params.material_id  ?? null,
+    p_coating:      params.coating      ?? null,
+    p_photochromic: params.photochromic ?? null,
+    p_spherical:    params.spherical    ?? null,
+    p_cylindrical:  params.cylindrical  ?? null,
+    p_addition:     params.addition     ?? null,
+    p_limit:        params.limit        ?? 50,
+    p_offset:       params.offset       ?? 0,
+    p_treatments:   params.treatments   ?? null,
+    p_price_min:    params.price_min    ?? null,
+    p_price_max:    params.price_max    ?? null,
   })
 }
 
-export async function searchLenses(term: string): Promise<LensOption[]> {
-  return callRpc<LensOption[]>('rpc_lens_search', {
-    p_search_term: term,
+export async function getStandardFilterOptions(
+  params: StandardFilterParamsV3 = {}
+): Promise<StandardFilterOptions> {
+  return callRpc<StandardFilterOptions>('rpc_standard_filter_options', {
+    p_lens_type:   params.lens_type   ?? null,
+    p_material_id: params.material_id ?? null,
+    p_treatments:  params.treatments  ?? null,
+    p_spherical:   params.spherical   ?? null,
+    p_cylindrical: params.cylindrical ?? null,
+    p_addition:    params.addition    ?? null,
+  })
+}
+
+export async function searchStandard(
+  params: StandardSearchParamsV3 = {}
+): Promise<CanonicalSearchResultV3<CanonicalStandardV3>> {
+  return callRpc<CanonicalSearchResultV3<CanonicalStandardV3>>('rpc_standard_search', {
+    p_lens_type:   params.lens_type   ?? null,
+    p_material_id: params.material_id ?? null,
+    p_treatments:  params.treatments  ?? null,
+    p_spherical:   params.spherical   ?? null,
+    p_cylindrical: params.cylindrical ?? null,
+    p_addition:    params.addition    ?? null,
+    p_limit:       params.limit       ?? 50,
+    p_offset:      params.offset      ?? 0,
+    p_price_min:   params.price_min   ?? null,
+    p_price_max:   params.price_max   ?? null,
+  })
+}
+
+export async function searchCanonicalForPrescription(params: {
+  spherical?: number
+  cylindrical?: number
+  addition?: number
+  lens_type?: string
+  limit?: number
+}): Promise<PrescriptionSearchV3Result> {
+  return callRpc<PrescriptionSearchV3Result>('rpc_canonical_for_prescription_v3', {
+    p_spherical:   params.spherical   ?? null,
+    p_cylindrical: params.cylindrical ?? null,
+    p_addition:    params.addition    ?? null,
+    p_lens_type:   params.lens_type   ?? null,
+    p_limit:       params.limit       ?? 20,
+  })
+}
+
+export async function getCanonicalDetail(
+  canonicalId: string,
+  isPremium = false
+): Promise<CanonicalDetail[]> {
+  return callRpc<CanonicalDetail[]>('rpc_canonical_detail', {
+    p_canonical_id: canonicalId,
+    p_is_premium:   isPremium,
   })
 }
 
