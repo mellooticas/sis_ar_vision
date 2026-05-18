@@ -20,25 +20,25 @@ function getDistanceInfo(distanceMm: number | null | undefined) {
   if (!distanceMm || distanceMm <= 0) return null
 
   if (distanceMm < MIN_DISTANCE_MM) {
-    return { label: 'Muito perto', color: 'text-red-400' }
+    return { label: 'Muito perto', color: 'text-destructive' }
   }
   if (distanceMm < OPTIMAL_DISTANCE_MIN_MM) {
-    return { label: 'Perto', color: 'text-amber-400' }
+    return { label: 'Perto', color: 'text-warning' }
   }
   if (distanceMm <= OPTIMAL_DISTANCE_MAX_MM) {
-    return { label: 'Ideal', color: 'text-emerald-400' }
+    return { label: 'Ideal', color: 'text-success' }
   }
   if (distanceMm <= MAX_DISTANCE_MM) {
-    return { label: 'Longe', color: 'text-amber-400' }
+    return { label: 'Longe', color: 'text-warning' }
   }
-  return { label: 'Muito longe', color: 'text-red-400' }
+  return { label: 'Muito longe', color: 'text-destructive' }
 }
 
 /**
  * Displays real-time feedback about face detection status, FPS, and distance.
  */
 export function QualityIndicator({ faceDetected, fps, distanceMm, className }: QualityIndicatorProps) {
-  const fpsColor = fps >= 24 ? 'text-emerald-400' : fps >= 15 ? 'text-amber-400' : 'text-red-400'
+  const fpsColor = fps >= 24 ? 'text-success' : fps >= 15 ? 'text-warning' : 'text-destructive'
   const distanceInfo = getDistanceInfo(distanceMm)
 
   return (
@@ -48,7 +48,7 @@ export function QualityIndicator({ faceDetected, fps, distanceMm, className }: Q
         <div
           className={cn(
             'h-2 w-2 rounded-full',
-            faceDetected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'
+            faceDetected ? 'bg-success animate-pulse' : 'bg-destructive'
           )}
         />
         <span className="text-white/80">

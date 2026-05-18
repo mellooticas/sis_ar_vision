@@ -26,14 +26,14 @@ const SHAPE_ICONS: Record<string, string> = {
 export function FaceShapeCard({ result, className }: FaceShapeCardProps) {
   const confidencePercent = Math.round(result.confidence * 100)
   const confidenceColor =
-    confidencePercent >= 80 ? 'text-emerald-500' :
-    confidencePercent >= 60 ? 'text-amber-500' : 'text-red-400'
+    confidencePercent >= 80 ? 'text-success' :
+    confidencePercent >= 60 ? 'text-warning' : 'text-destructive'
 
   return (
     <div className={cn('rounded-xl border bg-card p-6 space-y-4', className)}>
       {/* Shape header */}
       <div className="flex items-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-fuchsia-500/10 text-3xl">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-3xl">
           {SHAPE_ICONS[result.shape] || '○'}
         </div>
         <div>

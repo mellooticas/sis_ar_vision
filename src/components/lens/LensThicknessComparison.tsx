@@ -60,7 +60,7 @@ export function LensThicknessComparison({ comparison, className }: LensThickness
                   Peso: ~{result.weight}g
                 </p>
                 {i > 0 && reductionPercent > 0 && (
-                  <p className="text-xs font-medium text-emerald-500">
+                  <p className="text-xs font-medium tabular-nums text-success">
                     -{reductionPercent}% vs CR-39
                   </p>
                 )}

@@ -105,7 +105,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           {product.stock_qty !== null && (
             <p className="text-sm">
               <span className="text-muted-foreground">Estoque: </span>
-              <span className={product.stock_qty > 0 ? 'text-emerald-600' : 'text-red-500'}>
+              <span className={product.stock_qty > 0 ? 'text-success tabular-nums' : 'text-destructive'}>
                 {product.stock_qty > 0 ? `${product.stock_qty} unidades` : 'Esgotado'}
               </span>
             </p>

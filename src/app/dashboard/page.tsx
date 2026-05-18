@@ -104,16 +104,16 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            <span className="inline-flex items-center rounded-full bg-fuchsia-100 dark:bg-fuchsia-900/30 px-3 py-1 text-xs font-medium text-fuchsia-700 dark:text-fuchsia-400">
+            <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
               AR Try-On
             </span>
             <span className="inline-flex items-center rounded-full bg-cyan-100 dark:bg-cyan-900/30 px-3 py-1 text-xs font-medium text-cyan-700 dark:text-cyan-400">
               PD com correcao yaw
             </span>
-            <span className="inline-flex items-center rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+            <span className="inline-flex items-center rounded-full bg-success/15 px-3 py-1 text-xs font-medium text-success">
               Formato do Rosto
             </span>
-            <span className="inline-flex items-center rounded-full bg-amber-100 dark:bg-amber-900/30 px-3 py-1 text-xs font-medium text-amber-700 dark:text-amber-400">
+            <span className="inline-flex items-center rounded-full bg-warning/15 px-3 py-1 text-xs font-medium text-warning">
               Espessura de Lentes
             </span>
             <span className="inline-flex items-center rounded-full bg-purple-100 dark:bg-purple-900/30 px-3 py-1 text-xs font-medium text-purple-700 dark:text-purple-400">

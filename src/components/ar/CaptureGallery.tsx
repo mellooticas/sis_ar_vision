@@ -69,7 +69,7 @@ export function CaptureGallery({ captures, onRemove, className }: CaptureGallery
             <button
               type="button"
               onClick={() => shareCapture(capture)}
-              className="rounded-full bg-white/20 p-1.5 text-white hover:bg-green-500/80"
+              className="rounded-full bg-white/20 p-1.5 text-white hover:bg-success/80"
               aria-label="Compartilhar"
             >
               <Share2 className="h-3.5 w-3.5" />
@@ -86,7 +86,7 @@ export function CaptureGallery({ captures, onRemove, className }: CaptureGallery
               <button
                 type="button"
                 onClick={() => onRemove(capture.id)}
-                className="rounded-full bg-white/20 p-1.5 text-white hover:bg-red-500/80"
+                className="rounded-full bg-white/20 p-1.5 text-white hover:bg-destructive/80"
                 aria-label="Remover"
               >
                 <X className="h-3.5 w-3.5" />

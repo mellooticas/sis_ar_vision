@@ -43,7 +43,7 @@ export default function MedirPdPage() {
       {/* Mode description */}
       <div className={cn(
         'rounded-lg border p-4 mb-6 text-sm',
-        mode === 'iris' ? 'bg-primary/5 border-primary/20' : 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-800'
+        mode === 'iris' ? 'bg-primary/5 border-primary/20' : 'bg-success/10 border-success/30'
       )}>
         {mode === 'iris' ? (
           <p>

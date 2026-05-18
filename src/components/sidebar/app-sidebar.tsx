@@ -24,7 +24,7 @@ function getIcon(name: string): LucideIcon {
 }
 
 // -- App config --
-const APP_ACCENT = '#D946EF'
+const APP_ACCENT = 'var(--primary)' // consome token CSS (fuchsia-500 canon DS)
 const APP_TITLE = 'AR Vision'
 const APP_KICKER = 'Clearix'
 

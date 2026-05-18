@@ -282,7 +282,7 @@ export default function FotosArmacoesPage() {
 
             {/* Angle indicator */}
             <div className="absolute top-3 right-3 rounded-lg bg-black/60 px-3 py-1.5 flex items-center gap-2">
-              {isRequired && <Star className="h-3 w-3 text-amber-400 fill-amber-400" />}
+              {isRequired && <Star className="h-3 w-3 text-warning fill-warning" />}
               <p className="text-xs font-semibold text-white">
                 Ângulo {currentAngleIndex + 1}/{FRAME_PHOTO_ANGLES.length} — {ANGLE_LABELS[currentAngle]}
               </p>
@@ -329,8 +329,8 @@ export default function FotosArmacoesPage() {
                     <div className="relative h-11 w-14 rounded overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={photo.localUrl} alt={angle} className="h-full w-full object-cover" />
-                      <div className="absolute top-0.5 right-0.5 rounded-full bg-green-500 p-0.5">
-                        <Check className="h-2.5 w-2.5 text-white" />
+                      <div className="absolute top-0.5 right-0.5 rounded-full bg-success p-0.5">
+                        <Check className="h-2.5 w-2.5 text-success-foreground" />
                       </div>
                       <button
                         type="button"
@@ -349,7 +349,7 @@ export default function FotosArmacoesPage() {
                     </div>
                   )}
                   <div className="flex items-center gap-1">
-                    {required && <Star className="h-2 w-2 text-amber-400 fill-amber-400" />}
+                    {required && <Star className="h-2 w-2 text-warning fill-warning" />}
                     <span className="text-[10px] font-medium">{ANGLE_LABELS[angle]}</span>
                   </div>
                 </button>

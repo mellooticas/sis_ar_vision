@@ -24,8 +24,8 @@ export function PDResult({ result, fittingHeight, onRetry, onAccept, className }
 
   const confidencePercent = Math.round(result.confidence * 100)
   const confidenceColor =
-    confidencePercent >= 85 ? 'text-emerald-500' :
-    confidencePercent >= 70 ? 'text-amber-500' : 'text-red-500'
+    confidencePercent >= 85 ? 'text-success' :
+    confidencePercent >= 70 ? 'text-warning' : 'text-destructive'
 
   const handleSaveToPatient = useCallback(async (patient: { id: string; name: string }) => {
     setSaving(true)
@@ -129,7 +129,7 @@ export function PDResult({ result, fittingHeight, onRetry, onAccept, className }
       )}
 
       {saved && (
-        <div className="mb-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-center text-sm text-emerald-600 dark:text-emerald-400">
+        <div className="mb-4 rounded-lg bg-success/10 border border-success/20 p-3 text-center text-sm text-success">
           Dados salvos na prescricao do paciente
         </div>
       )}

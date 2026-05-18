@@ -26,7 +26,7 @@ export default function ClienteResumoPage() {
     <div className="flex flex-1 flex-col items-center p-6 max-w-lg mx-auto">
       {/* Success header */}
       <div className="text-center mb-8 mt-8">
-        <CheckCircle2 className="mx-auto h-16 w-16 text-emerald-500 mb-4" />
+        <CheckCircle2 className="mx-auto h-16 w-16 text-success mb-4" />
         <h1 className="text-3xl font-bold font-heading mb-2">Tudo Pronto!</h1>
         <p className="text-muted-foreground">
           {patientName}, aqui esta o resumo da sua sessao

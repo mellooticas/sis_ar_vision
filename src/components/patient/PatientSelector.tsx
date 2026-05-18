@@ -41,7 +41,7 @@ export function PatientSelector({ onSelect, className }: PatientSelectorProps) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por nome ou CPF..."
-          className="w-full rounded-lg border bg-background py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-fuchsia-500/30"
+          className="w-full rounded-lg border bg-background py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary/30"
         />
       </div>
 

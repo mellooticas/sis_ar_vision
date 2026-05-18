@@ -9,10 +9,11 @@ interface FitScoreBadgeProps {
   className?: string
 }
 
+// Tokens semanticos canonicos (DS 2026-05-18). Dark mode adapta via CSS vars.
 const CATEGORY_COLORS = {
-  perfeito: { bg: 'bg-emerald-500', text: 'text-emerald-500', ring: 'stroke-emerald-500' },
-  aceitavel: { bg: 'bg-amber-500', text: 'text-amber-500', ring: 'stroke-amber-500' },
-  inadequado: { bg: 'bg-red-500', text: 'text-red-500', ring: 'stroke-red-500' },
+  perfeito:   { bg: 'bg-success',     text: 'text-success',     ring: 'stroke-success' },
+  aceitavel:  { bg: 'bg-warning',     text: 'text-warning',     ring: 'stroke-warning' },
+  inadequado: { bg: 'bg-destructive', text: 'text-destructive', ring: 'stroke-destructive' },
 }
 
 const CATEGORY_LABELS = {

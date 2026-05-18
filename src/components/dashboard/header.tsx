@@ -109,7 +109,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
             <p className="truncate text-sm font-semibold text-foreground flex items-center gap-1.5">
               {userName}
               {isSuperUser && (
-                <span className="inline-flex items-center rounded-full bg-fuchsia-100 dark:bg-fuchsia-900/30 px-1.5 py-0.5 text-[10px] font-bold text-fuchsia-700 dark:text-fuchsia-400 ring-1 ring-inset ring-fuchsia-400/30">
+                <span className="inline-flex items-center rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-bold text-primary ring-1 ring-inset ring-primary/30">
                   SA
                 </span>
               )}
@@ -123,7 +123,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
           <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-card shadow-lg z-50">
             <div className="border-b border-border px-4 py-3">
               <p className="text-sm font-semibold text-foreground">{userName}</p>
-              <p className="mt-0.5 text-xs text-fuchsia-600 dark:text-fuchsia-400">{userRoleLabel}</p>
+              <p className="mt-0.5 text-xs text-primary">{userRoleLabel}</p>
               {tenantName && (
                 <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{tenantName}</p>
               )}
@@ -147,7 +147,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                className="flex w-full items-center gap-3 px-4 py-3 text-destructive hover:bg-destructive/10 transition-colors"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="text-sm font-semibold">Sair</span>
