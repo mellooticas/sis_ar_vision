@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { icons, X, Moon, Sun } from 'lucide-react'
 import { ClearixIcon } from '@/components/brand/ClearixLogo'
+import { PoweredByDigiai } from '@/components/brand/DigiaiLogo'
 import { useAuth } from '@/contexts/auth-context'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useSidebar } from './sidebar-context'
@@ -229,6 +230,7 @@ export function AppSidebar() {
             <div>
               <p className="text-micro font-semibold uppercase tracking-[0.15em] opacity-50">{APP_KICKER}</p>
               <p className="text-lg font-black tracking-tight">{APP_TITLE}</p>
+              <PoweredByDigiai className="mt-0.5" />
             </div>
           )}
         </Link>

@@ -24,6 +24,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useSidebar } from '@/contexts/sidebar-context'
 import { ClearixIcon } from '@/components/brand/ClearixLogo'
+import { PoweredByDigiai } from '@/components/brand/DigiaiLogo'
 import { getRoleLabel } from '@/lib/auth/jwt-claims'
 import type { UserRole } from '@/lib/constants'
 
@@ -134,6 +135,7 @@ export function DashboardSidebar({ open = false, onClose }: DashboardSidebarProp
               <div>
                 <p className="text-micro font-semibold uppercase tracking-[0.15em] opacity-50">Clearix</p>
                 <p className="text-lg font-black tracking-tight">AR &amp; Vision</p>
+                <PoweredByDigiai className="mt-0.5" />
               </div>
             )}
           </div>
