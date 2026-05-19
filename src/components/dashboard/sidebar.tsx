@@ -129,7 +129,7 @@ export function DashboardSidebar({ open = false, onClose }: DashboardSidebarProp
           style={{ borderColor: 'var(--sidebar-border)' }}
         >
           <div className={`flex items-center ${collapsed ? '' : 'gap-3'}`}>
-            <ClearixIcon size={36} accent="#D946EF" />
+            <ClearixIcon size={36} accent="var(--primary)" />
             {!collapsed && (
               <div>
                 <p className="text-micro font-semibold uppercase tracking-[0.15em] opacity-50">Clearix</p>

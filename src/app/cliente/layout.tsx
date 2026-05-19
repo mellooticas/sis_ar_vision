@@ -27,7 +27,7 @@ export default function ClienteLayout({
           {/* Minimal header */}
           <header className="flex h-14 shrink-0 items-center justify-center border-b px-4">
             <div className="flex items-center gap-2">
-              <ClearixIcon size={28} accent="#D946EF" />
+              <ClearixIcon size={28} accent="var(--primary)" />
               <span className="text-sm font-bold tracking-tight">Clearix AR & Vision</span>
             </div>
           </header>
